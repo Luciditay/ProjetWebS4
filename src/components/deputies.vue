@@ -1,22 +1,21 @@
 <template>
 <div id="App">
   <div id="deputies gallery " v-if="displayWholeGallery">
-    <Gallery-options @update-search="searchDeputy"
-                     :deputySortType.sync="deputySortType"
-                     />
+    <Gallery-options 
+      @update-search="searchDeputy"
+      :deputySortType.sync="deputySortType"
+    />
 
-    <div class="gallery">
-      <Deputy
-        v-for="deputy in deputySorted"
-        :key="deputy.depute.id"
-        :name='deputy.depute.nom' 
-        :birthdate="deputy.depute.date_naissance"
-        :circonscription='deputy.depute.nom_circo'
-        :num_dptmt="deputy.depute.num_deptmt"
-        :parliamentary_group="deputy.depute.groupe_sigle"
-        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputy.depute.slug + '/120' "/>
-    </div>
-    
+    <Deputy
+      v-for="deputy in deputySorted"
+      :key="deputy.depute.id"
+      :name='deputy.depute.nom' 
+      :birthdate="deputy.depute.date_naissance"
+      :circonscription='deputy.depute.nom_circo'
+      :num_dptmt="deputy.depute.num_deptmt"
+      :parliamentary_group="deputy.depute.groupe_sigle"
+      :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputy.depute.slug + '/120' "
+    />
   </div>
 
   <div id="deputyCard" v-show="displayOneDeputy">
@@ -30,7 +29,8 @@
         :circonscription='deputyData.nom_circo'
         :num_dptmt="deputyData.num_deptmt"
         :parliamentary_group="deputyData.groupe_sigle"
-        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120' "/>
+        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120' "
+      />
         <p v-else> Lae député.e recherché.e n'existe pas</p>
     </div>
   </div> 
