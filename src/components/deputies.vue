@@ -1,11 +1,12 @@
 <template>
 <div id="App">
   <div id="deputies gallery " v-if="displayWholeGallery">
-    <Gallery-options :search.sync="search" :deputySortType="deputySortType"/>
+    <Gallery-options @update-search="searchDeputy"
+                     :deputySortType.sync="deputySortType"
+                     />
 
     <div class="gallery">
-      <p @if="search">{{deputySearchedData}}</p>
-      <deputy
+      <Deputy
         v-for="deputy in deputySorted"
         :key="deputy.depute.id"
         :name='deputy.depute.nom' 
@@ -24,12 +25,12 @@
     </div>
     <div id="deputyInfo">
       <Deputy v-if="deputyData"
-          :name="deputyData.nom"
-          :birthdate="deputyData.date_naissance"
-          :circonscription='deputyData.nom_circo'
-          :num_dptmt="deputyData.num_deptmt"
-          :parliamentary_group="deputyData.groupe_sigle"
-          :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120' "/>
+        :name="deputyData.nom"
+        :birthdate="deputyData.date_naissance"
+        :circonscription='deputyData.nom_circo'
+        :num_dptmt="deputyData.num_deptmt"
+        :parliamentary_group="deputyData.groupe_sigle"
+        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120' "/>
         <p v-else> Lae député.e recherché.e n'existe pas</p>
     </div>
   </div> 
@@ -88,7 +89,8 @@ export default {
     },
 
     methods: {
-      searchDeputy: function() {
+      searchDeputy(search) {
+        this.search = search
         
         var myHeaders = new Headers();
 

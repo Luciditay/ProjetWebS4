@@ -1,12 +1,12 @@
 <template>
     <div class="search-options">
-      <input type="text" v-model="search" name="search" placeholder="Chercher un député">
-      <button @click="searchDeputy">Search </button>
+      <input type="text" v-model="searchContent" placeholder="Chercher un député">
+      <button @click="onSearchChanged">Search </button>
 
       <label for="deputy-sort"> Trier par : </label>
       <select v-model="deputySortType" id="deputy-sort">
 		<option value="AZName">Noms de A à Z</option>
-      <option value="Party">Parti Politique</option>
+        <option value="Party">Parti Politique</option>
       </select>
 
     </div>
@@ -18,40 +18,30 @@ export default {
     name: 'GaleryOptions',
 
     props: {
-        search: String,
-        deputySortType: String,
+        search: {type : String},
+        deputySortType: {type : String}
+    },
+
+      data(){
+        return {
+            searchContent: this.search
+        }
+    },
+
+    watch:{
+        search(newValue){
+            this.searchContent = newValue;
+        }
     },
 
     methods: {
-        onSearchChanged: function(event){
-            this.$emit('update:search', event.target.value)
+        onSearchChanged(){
+           // let mySearch = this.search
+            this.$emit('update-search', this.searchContent)
         },
         onDeputySortTypeChanged(event){
-            this.$emit('update:search', event.target.value)
-        },
-
-      searchDeputy: function() {
-        
-        var myHeaders = new Headers();
-
-        var myInit = { method: 'GET',
-                  headers: myHeaders,
-                  mode: 'cors',
-                  cache: 'default' };
-
-        let URL = "https://www.nosdeputes.fr/" + nameToSlug(this.search) + "/json"
-        console.log(URL)
-        fetch(URL, myInit)
-        .then(res => {
-          console.log(res) 
-          return res.json()})
-        .then(data => {
-          this.deputyData = data.depute
-          })
-        .then(this.displayWholeGallery=false)
-        .then(this.displayOneDeputy=true)
-        .catch(err => console.log(err.message))
-    }
+            this.$emit('update:deputySortType', event.target.value)
+        }
     }
 
 }
