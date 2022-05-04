@@ -1,18 +1,39 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <deputies/>
   </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+// <script>
+import deputies from './components/deputies.vue'
+//import deputy from './components/deputy.vue'
+//import getDeputyDataBySlug from '@/services/deputiesRepository.js'
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
+    deputies//, deputy
+  },
+
+  data(){
+    return{ 
+      showGallery: true
+    }
   }
+
+    // data() {
+    //     return {
+    //         deputyData : ["Aa"]
+    //     }
+    // },
+
+
+    // methods: {
+    //     async retrieveDeputyData(){
+    //         this.deputyData = await getDeputyDataBySlug();
+    //     }
+    // }
 }
 </script>
 
