@@ -1,10 +1,10 @@
 <template>
 <div id="App">
-  <div id="deputies gallery " v-if="displayWholeGallery">
-    <Gallery-options 
-      @update-search="searchDeputy"
-      :deputySortType.sync="deputySortType"
-    />
+  <div id="deputies gallery" v-if="displayWholeGallery">
+    <div id='galleryOptions'>
+      <SearchBar @update-search="searchDeputy"/>
+      <SortChoices @update-deputySortType="updateDeputyTypeSort"/>
+    </div>
 
     <Deputy
       v-for="deputy in deputySorted"
@@ -42,31 +42,32 @@
 // <script>
 import Deputy from './Deputy.vue'
 import {nameToSlug} from '@/services/deputiesRepository.js'
-import GalleryOptions from './galleryOptions.vue'
+import SortChoices from './sortChoices.vue'
+import SearchBar from './searchBar.vue'
 
 export default {
   name: 'deputies',
   components: {
     Deputy,
-    GalleryOptions
+    SortChoices,
+    SearchBar
   },
 
   computed: {
 
-      deputySorted: function(){
-          const field = this.deputySortType;
-          let data = this.deputiesData.deputes
-          if (field=="AZName"){
-            const comparator = (a, b) => a.depute.nom_de_famille.localeCompare(b.depute.nom_de_famille) 
-            data.sort(comparator);
+    deputySorted: function(){
+        const field = this.deputySortType;
+        let data = this.deputiesData.deputes
+        if (field=="AZName"){
+          const comparator = (a, b) => a.depute.nom_de_famille.localeCompare(b.depute.nom_de_famille) 
+          data.sort(comparator);
           }
-         if (field=="Party"){
-            const comparator = (a, b) => a.depute.groupe_sigle.localeCompare(b.depute.groupe_sigle) 
-            data.sort(comparator);
-            }
-          return data;
-      },
- 
+        if (field=="Party"){
+          const comparator = (a, b) => a.depute.groupe_sigle.localeCompare(b.depute.groupe_sigle) 
+          data.sort(comparator);
+        }
+        return data;
+    },
     
   },
 
@@ -89,6 +90,10 @@ export default {
     },
 
     methods: {
+      updateDeputyTypeSort(newValue){
+        this.deputySortType=newValue;
+      },
+
       searchDeputy(search) {
         this.search = search
         
@@ -120,3 +125,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  #galleryOptions {
+    display: flex;
+   justify-content: center;
+  }
+</style>
