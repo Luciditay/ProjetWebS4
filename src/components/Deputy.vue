@@ -1,11 +1,14 @@
 <template>
     <div class="deputy-info">
-        <img id="deputy_picture" v-bind:src="URL_image">
+        <button type='button'>
+            <img id="deputy_picture" v-bind:src="URL_image">
+        </button>
         <form class="description">
             <ul id="name">{{name}}</ul>
             <ul id="birthdate">{{getAge(birthdate)}}  ans</ul>
-            <ul id="circo">{{circonscription}} ({{num_dptmt}})</ul>
-            <ul id="party">{{parliamentary_group}}</ul>
+            <ul id="circo">Circonscription : {{circonscription}} ({{num_dptmt}})</ul>
+            <ul id="party">{{aliasToGroup(parliamentary_group)}}</ul>
+            <ul id="job"> {{previous_job}}</ul>
         </form>
     </div>
 </template>
@@ -21,6 +24,7 @@ export default {
         circonscription : {type : String},
         num_dptmt : {type : String},
         parliamentary_group : {type : String},
+        previous_job : {type : String},
         URL_image : {type : String}
     },
 
@@ -36,6 +40,34 @@ export default {
        }
        return age;
    },
+
+   aliasToGroup(alias){
+       switch(alias){
+           case 'LREM':
+               return 'La République en Marche';
+            case 'NI':
+                return 'Non Inscrit';
+            case 'LFI':
+                return 'La France Insoumise';
+            case 'LR':
+                return 'Les Républicains';
+            case 'MODEM':
+                return 'Mouvement Démocrate';
+            case 'UDI':
+                return 'Union des démocrates indépendants';
+            case 'GDR':
+                return 'Gauche Démocrate et Républicaine';
+            case 'AE':
+                return 'Agir Ensemble';
+            case 'SOC':
+                return 'Socialistes et Apparentés';
+            case 'LT':
+                return 'Libertés et Territoires';
+
+            default:
+                return alias;
+       }
+   }
 } 
 }
 

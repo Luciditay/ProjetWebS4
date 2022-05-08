@@ -3,7 +3,8 @@
   <div id="deputies gallery" v-if="displayWholeGallery">
     <div id='galleryOptions'>
       <SearchBar @update-search="searchDeputy"/>
-      <SortChoices @update-deputySortType="updateDeputyTypeSort"/>
+      <SortChoices :deputySortType.sync="deputySortType"/>
+      <RandomDeputyButton @update-randomNumber='updateRandomNumber'/>
     </div>
 
     <Deputy
@@ -14,11 +15,23 @@
       :circonscription='deputy.depute.nom_circo'
       :num_dptmt="deputy.depute.num_deptmt"
       :parliamentary_group="deputy.depute.groupe_sigle"
-      :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputy.depute.slug + '/120' "
-    />
+      :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputy.depute.slug + '/120' "/>
   </div>
 
-  <div id="deputyCard" v-show="displayOneDeputy">
+  <div id="randomDeputy" v-if='displayRandomDeputy'>
+    <BackToMenu @update-displayMode='backToMenu'/>
+
+    <Deputy v-if="displayRandomDeputy"
+      :name="randomDeputyData.nom"
+      :birthdate="randomDeputyData.date_naissance"
+      :circonscription='randomDeputyData.nom_circo'
+      :num_dptmt="randomDeputyData.num_deptmt"
+      :parliamentary_group="randomDeputyData.groupe_sigle"
+      :previous_job="randomDeputyData.profession"
+      :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + randomDeputyData.slug + '/120' "/>
+  </div>
+
+  <div id="deputyCard" v-if="displayOneDeputy">
     <div id="ButtonMenu">
       <button @click="backToMenu">Back to main gallery</button>
     </div>
@@ -29,8 +42,9 @@
         :circonscription='deputyData.nom_circo'
         :num_dptmt="deputyData.num_deptmt"
         :parliamentary_group="deputyData.groupe_sigle"
-        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120' "
-      />
+        :previous_job="randomDeputyData.profession"
+        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120' "/>
+
         <p v-else> Lae député.e recherché.e n'existe pas</p>
     </div>
   </div> 
@@ -44,13 +58,17 @@ import Deputy from './Deputy.vue'
 import {nameToSlug} from '@/services/deputiesRepository.js'
 import SortChoices from './sortChoices.vue'
 import SearchBar from './searchBar.vue'
+import RandomDeputyButton from './randomDeputyButton.vue'
+import BackToMenu from './backToMenu.vue'
 
 export default {
   name: 'deputies',
   components: {
     Deputy,
     SortChoices,
-    SearchBar
+    SearchBar,
+    RandomDeputyButton,
+    BackToMenu
   },
 
   computed: {
@@ -68,6 +86,12 @@ export default {
         }
         return data;
     },
+
+    randomDeputyData: function(){
+      let data = this.deputiesData.deputes;
+      console.log(data);
+      return data[this.randomNumber].depute;
+    }
     
   },
 
@@ -77,8 +101,10 @@ export default {
             deputiesData : {deputes:['Aa']},
             search: "",
             deputySortType: "",
+            randomNumber: 1,
             displayWholeGallery: true,
-            displayOneDeputy: false
+            displayOneDeputy: false,
+            displayRandomDeputy: false
         }
     },
 
@@ -90,8 +116,17 @@ export default {
     },
 
     methods: {
-      updateDeputyTypeSort(newValue){
-        this.deputySortType=newValue;
+
+        newRandomNumber: function(){
+            this.randomNumber = Math.floor(Math.random() * (576));
+            this.displayWholeGallery = false;
+            this.displayRandomDeputy = true;
+        },
+
+      updateRandomNumber(number){
+        this.randomNumber = number;
+        this.displayRandomDeputy = true;
+        this.displayWholeGallery = false;
       },
 
       searchDeputy(search) {
@@ -118,9 +153,10 @@ export default {
         .catch(err => console.log(err.message))
     },
 
-    backToMenu: function(){
-      this.displayWholeGallery=true;
-      this.displayOneDeputy=false;
+    backToMenu(displayMode){
+      this.displayWholeGallery=displayMode.displayWholeGallery;
+      this.displayOneDeputy=displayMode.displayOneDeputy;
+      this.displayRandomDeputy=displayMode.displayRandomDeputy;
     }
   }
 }
@@ -130,5 +166,6 @@ export default {
   #galleryOptions {
     display: flex;
    justify-content: center;
+   margin-bottom: 2%;
   }
 </style>

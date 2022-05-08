@@ -36,6 +36,6 @@ export default {
 
 <style scoped>
     .search-options{
-        margin-right: 5%;
+        margin-right: 3%;
     }
 </style>
