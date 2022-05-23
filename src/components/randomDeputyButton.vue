@@ -30,3 +30,10 @@ export default {
 }
 
 </script>
+
+<style scoped>
+    #randomDeputyButton{
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+</style>

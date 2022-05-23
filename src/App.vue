@@ -14,26 +14,7 @@ export default {
 
   components: {
     deputies//, deputy
-  },
-
-  data(){
-    return{ 
-      showGallery: true
-    }
   }
-
-    // data() {
-    //     return {
-    //         deputyData : ["Aa"]
-    //     }
-    // },
-
-
-    // methods: {
-    //     async retrieveDeputyData(){
-    //         this.deputyData = await getDeputyDataBySlug();
-    //     }
-    // }
 }
 </script>
 

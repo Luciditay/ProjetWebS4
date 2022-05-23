@@ -1,25 +1,34 @@
 <template>
 <div id="App">
-  <div id="deputies gallery" v-if="displayWholeGallery">
-    <div id='galleryOptions'>
-      <SearchBar @update-search="searchDeputy"/>
+  <Header/>
+  <div id="deputies-gallery" v-if="displayWholeGallery">
+    <div id='Options'>
       <SortChoices :deputySortType.sync="deputySortType"/>
       <RandomDeputyButton @update-randomNumber='updateRandomNumber'/>
+      <SearchBar @update-search="searchDeputy"/>
     </div>
-
-    <Deputy
-      v-for="deputy in deputySorted"
-      :key="deputy.depute.id"
-      :name='deputy.depute.nom' 
-      :birthdate="deputy.depute.date_naissance"
-      :circonscription='deputy.depute.nom_circo'
-      :num_dptmt="deputy.depute.num_deptmt"
-      :parliamentary_group="deputy.depute.groupe_sigle"
-      :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputy.depute.slug + '/120' "/>
+      <div id="deputyCard"> 
+        <Deputy
+          v-for="deputy in deputySorted"
+          :key="deputy.depute.id"
+          :name='deputy.depute.nom' 
+          :birthdate="deputy.depute.date_naissance"
+          :circonscription='deputy.depute.nom_circo'
+          :num_dptmt="deputy.depute.num_deptmt"
+          :parliamentary_group="deputy.depute.groupe_sigle"
+          :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputy.depute.slug + '/120' "
+          :clickable_Image='true'
+          :id_depute="deputy.id"/>
+          />
+      </div>
   </div>
 
   <div id="randomDeputy" v-if='displayRandomDeputy'>
-    <BackToMenu @update-displayMode='backToMenu'/>
+    <div id='Options'>
+      <BackToMenu @update-displayMode='backToMenu'/>
+      <RandomDeputyButton @update-randomNumber='updateRandomNumber'/>
+      <SearchBar @update-search="searchDeputy"/>
+    </div>
 
     <Deputy v-if="displayRandomDeputy"
       :name="randomDeputyData.nom"
@@ -28,14 +37,18 @@
       :num_dptmt="randomDeputyData.num_deptmt"
       :parliamentary_group="randomDeputyData.groupe_sigle"
       :previous_job="randomDeputyData.profession"
-      :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + randomDeputyData.slug + '/120' "/>
+      :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + randomDeputyData.slug + '/120' "
+      :clickable_Image='false'
+      :id_depute="deputy.id"/>
   </div>
 
   <div id="deputyCard" v-if="displayOneDeputy">
-    <div id="ButtonMenu">
-      <button @click="backToMenu">Back to main gallery</button>
+    <div id='Options'>
+      <BackToMenu @update-displayMode='backToMenu'/>
+      <RandomDeputyButton @update-randomNumber='updateRandomNumber'/>
+      <SearchBar @update-search="searchDeputy"/>
     </div>
-    <div id="deputyInfo">
+
       <Deputy v-if="deputyData"
         :name="deputyData.nom"
         :birthdate="deputyData.date_naissance"
@@ -43,14 +56,13 @@
         :num_dptmt="deputyData.num_deptmt"
         :parliamentary_group="deputyData.groupe_sigle"
         :previous_job="randomDeputyData.profession"
-        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120' "/>
-
+        :URL_image=" 'https://www.nosdeputes.fr/depute/photo/' + deputyData.slug + '/120'"
+        :clickable_Image="false" 
+        :id_depute="deputy.id"/>
         <p v-else> Lae député.e recherché.e n'existe pas</p>
-    </div>
   </div> 
+  <Footer/>
 </div>
-
-  
 </template>
 
 // <script>
@@ -60,6 +72,8 @@ import SortChoices from './sortChoices.vue'
 import SearchBar from './searchBar.vue'
 import RandomDeputyButton from './randomDeputyButton.vue'
 import BackToMenu from './backToMenu.vue'
+import Header from './header.vue'
+import Footer from './footer.vue'
 
 export default {
   name: 'deputies',
@@ -68,7 +82,9 @@ export default {
     SortChoices,
     SearchBar,
     RandomDeputyButton,
-    BackToMenu
+    BackToMenu,
+    Header,
+    Footer
   },
 
   computed: {
@@ -84,27 +100,54 @@ export default {
           const comparator = (a, b) => a.depute.groupe_sigle.localeCompare(b.depute.groupe_sigle) 
           data.sort(comparator);
         }
+        if (field=="Youngest to Eldest"){
+          const comparator = (a, b) => a.depute.date_naissance.localeCompare(b.depute.date_naissance)
+          data.sort(comparator).reverse();
+        }
+        if (field=="Eldest to Youngest"){
+          const comparator = (a, b) => a.depute.date_naissance.localeCompare(b.depute.date_naissance)
+          data.sort(comparator);
+        }
         return data;
     },
 
     randomDeputyData: function(){
       let data = this.deputiesData.deputes;
-      console.log(data);
       return data[this.randomNumber].depute;
     }
     
   },
 
+   watch: {
+        randomNumber: function(newValue){
+            localStorage.setItem("randomNumber", newValue);
+        },
+        
+         displayGallery: function(newValue){
+        localStorage.setItem("displayWholeGallery", newValue)
+      },
+
+       displayDeputy: function(newValue){
+        localStorage.setItem("displayOneDeputy", newValue)
+      },
+
+      displayRandom: function(newValue){
+        localStorage.setItem("displayRandomDeputy", newValue)
+      }
+    },
+
     data() {
         return {
             deputyData: null,
+            selectedSlug : undefined,
             deputiesData : {deputes:['Aa']},
-            search: "",
-            deputySortType: "",
-            randomNumber: 1,
-            displayWholeGallery: true,
-            displayOneDeputy: false,
-            displayRandomDeputy: false
+            search: localStorage.getItem("search") || "",
+            deputySortType: localStorage.getItem("deputySortType") || "",
+            randomNumber: localStorage.getItem("randomNumber") || 1,
+            displayWholeGallery: localStorage.getItem("displayWholeGallery") || true,
+            displayOneDeputy: localStorage.getItem("displayOneDeputy") || false,
+            displayRandomDeputy: localStorage.getItem("displayRandomDeputy") || false,
+            
         }
     },
 
@@ -117,16 +160,11 @@ export default {
 
     methods: {
 
-        newRandomNumber: function(){
-            this.randomNumber = Math.floor(Math.random() * (576));
-            this.displayWholeGallery = false;
-            this.displayRandomDeputy = true;
-        },
-
       updateRandomNumber(number){
         this.randomNumber = number;
         this.displayRandomDeputy = true;
         this.displayWholeGallery = false;
+        this.displayOneDeputy = false;
       },
 
       searchDeputy(search) {
@@ -140,32 +178,37 @@ export default {
                   cache: 'default' };
 
         let URL = "https://www.nosdeputes.fr/" + nameToSlug(this.search) + "/json"
-        console.log(URL)
         fetch(URL, myInit)
         .then(res => {
-          console.log(res) 
           return res.json()})
         .then(data => {
           this.deputyData = data.depute
           })
         .then(this.displayWholeGallery=false)
         .then(this.displayOneDeputy=true)
+        .then(this.displayRandomDeputy=false)
         .catch(err => console.log(err.message))
     },
 
-    backToMenu(displayMode){
-      this.displayWholeGallery=displayMode.displayWholeGallery;
-      this.displayOneDeputy=displayMode.displayOneDeputy;
-      this.displayRandomDeputy=displayMode.displayRandomDeputy;
+    backToMenu(){
+      this.displayWholeGallery=true;
+      this.displayOneDeputy=false;
+      this.displayRandomDeputy=false;
     }
   }
 }
 </script>
 
 <style scoped>
-  #galleryOptions {
+
+  #Options {
     display: flex;
-   justify-content: center;
-   margin-bottom: 2%;
+    justify-content: center;
+    margin-bottom: 2%;
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
   }
+
 </style>

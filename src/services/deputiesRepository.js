@@ -18,7 +18,6 @@ function removeAccent(str){
   return str1;
 }
 
-
 export function nameToSlug(deputyName){
     let test = deputyName.replaceAll(" ", "-")
     let deputySlug = removeAccent(test);

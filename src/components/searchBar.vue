@@ -22,6 +22,7 @@ export default {
 
     watch: {
         search(newValue){
+            localStorage.setItem("search", newValue)
             this.searchContent=newValue;
         }
     },
@@ -36,6 +37,7 @@ export default {
 
 <style scoped>
     .search-options{
-        margin-right: 3%;
+        margin-left: 2%;
+        margin-right: 2%;
     }
 </style>
